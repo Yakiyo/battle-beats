@@ -5,7 +5,7 @@
 
 
 int startX(int slot) {
-  return (screenWUnit * slot) + 20 + beatRadius;
+  return (screenWUnit * slot) + 40 + beatRadius;
 }
 
 typedef struct Beat {
@@ -16,8 +16,7 @@ typedef struct Beat {
 
 Vec(Beat) beats;
 
-
-void CreateBeat(int slot) {
+void CreateBeat(int slot, int time) {
   int x = startX(slot);
   int y = headerHeight + beatRadius;
   Beat beat;
@@ -40,7 +39,9 @@ void UpdateBeats() {
     if (beat->posY > screenHeight - headerHeight) {
       // reset to top
   
-      beat->posY = headerHeight + beatRadius;
+      // beat->posY = headerHeight + beatRadius;
+      // it goes 480 pixels. so 80 pixels per second is 6 seconds of total traversel time
+      beat->posY = GetFrameTime() * 80;
     }
   }
 }
