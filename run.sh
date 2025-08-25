@@ -1,1 +1,1 @@
-gcc -o main.exe beat.c main.c const.c beatmap.c -I include -L lib -lraylib -lgdi32 -lwinmm && ./main.exe
+gcc -o main.exe beat.c main.c const.c -I include -L lib -lraylib -lgdi32 -lwinmm && ./main.exe

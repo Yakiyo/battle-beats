@@ -10,8 +10,10 @@ typedef struct Beat {
 
 // Functions
 int startX(int slot);
-void CreateBeat(int slot);
-void UpdateBeats();
+void CreateBeat(int slot, int time);
+void UpdateBeats(int timeElapsed);
 void DrawBeats();
+int ReadBeatMapFile();
+void LogBeats();
 
 #endif // BEAT_H

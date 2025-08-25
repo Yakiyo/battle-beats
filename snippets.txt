@@ -1,0 +1,7 @@
+/// timer
+time_t start = time(NULL);
+int seconds_passed = difftime(time(NULL), start);
+char str[4];
+sprintf(str, "%d", seconds_passed);
+
+DrawText(str, 10, 40, 20, WHITE);
