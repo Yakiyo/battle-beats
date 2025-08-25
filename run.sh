@@ -1,1 +1,1 @@
-gcc -o main.exe main.c text.c -I include -L lib -lraylib -lgdi32 -lwinmm
+gcc -o main.exe beat.c main.c const.c -I include -L lib -lraylib -lgdi32 -lwinmm
