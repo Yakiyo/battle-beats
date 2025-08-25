@@ -3,6 +3,14 @@
 #include "vec.h"
 #include "raylib.h"
 
+/**
+ * KEY ENUMS
+ * 1 - left
+ * 2 - up
+ * 3 - right
+ * 4 - down
+ */
+
 
 int startX(int slot) {
   return (screenWUnit * slot) + 40 + beatRadius;
@@ -19,6 +27,7 @@ typedef struct Beat {
   int posY;
 } Beat;
 
+int score = 0;
 Vec(Beat) beats;
 
 void CreateBeat(int slot, int time) {
@@ -27,7 +36,7 @@ void CreateBeat(int slot, int time) {
   Beat beat;
   beat.slot = slot;
   beat.posX = x;
-  beat.posY = 0;
+  beat.posY = -beatRadius;
   beat.time = time;
   vec_push(Beat, beats, beat);
 }
@@ -36,23 +45,19 @@ void UpdateBeats(int timeElapsed) {
   for (int i = 0; i < vec_size(beats); i++) {
     Beat *beat = &vec_A(beats, i);
     if (beat->passed == 2) {
-      // printf("Passing beat %d\n", i);
       continue;
     }
+
     // this beat is yet to come so we dont need to update it
     if (beat->time > timeElapsed) {
-      // printf("Skipping beat %d\n", i);
       beat->passed = 0;
       continue;
     }
+
     beat->passed = 1;
     beat->posY += beatSpeed;
 
-    if (beat->posY > screenHeight - headerHeight) {
-      // reset to top
-  
-      // beat->posY = headerHeight + beatRadius;
-      // it goes 480 pixels. so 80 pixels per second is 6 seconds of total traversel time
+    if (beat->posY > (screenHeight - headerHeight + beatRadius)) {
       beat->passed = 2;
     }
   }
