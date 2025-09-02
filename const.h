@@ -1,11 +1,18 @@
-#ifndef CONST_FILE_H
-#define CONST_FILE_H
+#ifndef CONST_H
+#define CONST_H
 
-extern const int screenWidth;
-extern const int screenHeight;
-extern const int screenWUnit;
-extern const int headerHeight;
-extern const int beatRadius;
-extern const int beatSpeed;
+typedef enum {
+    STARTING,
+    MENU,
+    SINGLEPLAYER,
+    MULTIPLAYER,
+    GENERATOR,
+} Pages;
 
-#endif // CONST_FILE_H
+extern const int SCREENWIDTH;
+extern const int SCREENHEIGHT;
+extern const int FPS;
+
+extern const char TITLE[];
+
+#endif // CONST_H
