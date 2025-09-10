@@ -8,7 +8,6 @@
 
 PageType currentPage = PAGE_OPENING;
 Texture2D charTexture1;
-Texture2D charTexture2;
 
 float _fader_timer = 0.0f;
 
@@ -19,14 +18,12 @@ int main() {
   SetTargetFPS(60);
 
   Image charImage1 = LoadImage("asset/guiter-player-1.png");
-  Image charImage2 = LoadImage("asset/guiter-player-2.png");
+  
 
   charTexture1 = LoadTextureFromImage(charImage1);
-  charTexture2 = LoadTextureFromImage(charImage2);
 
   // unload images from RAM after loading textures
   UnloadImage(charImage1);
-  UnloadImage(charImage2);
 
   // Global GUI styles
   GuiSetStyle(DEFAULT, TEXT_SIZE, 50);
@@ -66,7 +63,6 @@ int main() {
   }
 
   UnloadTexture(charTexture1);
-  UnloadTexture(charTexture2);
 
   CloseWindow();
   return 0;
@@ -113,6 +109,10 @@ void drawOpeningPage(int is_menu) {
     int b_quit = GuiButton(
         (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 300, buttonWidth, buttonHeight},
         "Quit Game");
+
+    DrawTexture(charTexture1, screenWidth / 5 - charTexture1.width / 2,
+                screenHeight / 2 - charTexture1.height / 2, WHITE);
+
 
     if (b_singleplayer) {
       currentPage = PAGE_SINGLEPLAYER;
