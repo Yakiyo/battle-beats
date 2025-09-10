@@ -12,61 +12,7 @@ Texture2D charTexture2;
 
 float _fader_timer = 0.0f;
 
-// void drawOpeningPage();
-
-void drawOpeningPage(int is_menu) {
-  int titleFontSize = 100;
-  int textFontSize = 50;
-  char* title = "Battle Beats";
-  int titleWidth = MeasureText(title, titleFontSize);
-
-  DrawText(title, (screenWidth - titleWidth) / 2, screenHeight / 4,
-           titleFontSize, PINK);
-
-  if (!is_menu) {
-    // change alpha over time which makes the text fade in and out
-    _fader_timer += GetFrameTime();
-    float alpha =
-        (sinf(_fader_timer * 2.0f) + 1.0f) * 0.5f * 255;  // 2.0f is speed
-
-    char* text = "Press ENTER to continue";
-    DrawText(text, (screenWidth - MeasureText(text, textFontSize)) / 2,
-             // light gray color
-             screenHeight / 2, textFontSize, (Color){200, 200, 200, alpha});
-
-    if (IsKeyPressed(KEY_ENTER)) {
-      currentPage = PAGE_MENU;
-      _fader_timer = 0.0f;  // reset timer for next use
-    }
-  } else {
-    int buttonWidth = 500;
-    int buttonHeight = 100;
-    int b_singleplayer = GuiButton(
-        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60, buttonWidth, buttonHeight},
-        "Single Player");
-
-    int b_multiplayer = GuiButton(
-        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 100, buttonWidth, buttonHeight},
-        "Multiplayer");
-    int b_generator = GuiButton(
-        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 200, buttonWidth, buttonHeight},
-        "Beatmap Generator");
-    
-    int b_quit = GuiButton(
-        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 300, buttonWidth, buttonHeight},
-        "Quit Game");
-
-    if (b_singleplayer) {
-      currentPage = PAGE_SINGLEPLAYER;
-    } else if (b_multiplayer) {
-      currentPage = PAGE_MULTIPLAYER;
-    } else if (b_generator) {
-      currentPage = PAGE_GENERATOR;
-    } else if (b_quit) {
-      currentPage = QUIT_GAME;
-    }
-  }
-}
+void drawOpeningPage(int is_menu);
 
 int main() {
   InitWindow(screenWidth, screenHeight, "Beat Game");
@@ -124,4 +70,58 @@ int main() {
 
   CloseWindow();
   return 0;
+}
+
+void drawOpeningPage(int is_menu) {
+  int titleFontSize = 100;
+  int textFontSize = 50;
+  char* title = "Battle Beats";
+  int titleWidth = MeasureText(title, titleFontSize);
+
+  DrawText(title, (screenWidth - titleWidth) / 2, screenHeight / 4,
+           titleFontSize, PINK);
+
+  if (!is_menu) {
+    // change alpha over time which makes the text fade in and out
+    _fader_timer += GetFrameTime();
+    float alpha =
+        (sinf(_fader_timer * 2.0f) + 1.0f) * 0.5f * 255;  // 2.0f is speed
+
+    char* text = "Press ENTER to continue";
+    DrawText(text, (screenWidth - MeasureText(text, textFontSize)) / 2,
+             // light gray color
+             screenHeight / 2, textFontSize, (Color){200, 200, 200, alpha});
+
+    if (IsKeyPressed(KEY_ENTER)) {
+      currentPage = PAGE_MENU;
+      _fader_timer = 0.0f;  // reset timer for next use
+    }
+  } else {
+    int buttonWidth = 500;
+    int buttonHeight = 100;
+    int b_singleplayer = GuiButton(
+        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60, buttonWidth, buttonHeight},
+        "Single Player");
+
+    int b_multiplayer = GuiButton(
+        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 100, buttonWidth, buttonHeight},
+        "Multiplayer");
+    int b_generator = GuiButton(
+        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 200, buttonWidth, buttonHeight},
+        "Beatmap Generator");
+    
+    int b_quit = GuiButton(
+        (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 300, buttonWidth, buttonHeight},
+        "Quit Game");
+
+    if (b_singleplayer) {
+      currentPage = PAGE_SINGLEPLAYER;
+    } else if (b_multiplayer) {
+      currentPage = PAGE_MULTIPLAYER;
+    } else if (b_generator) {
+      currentPage = PAGE_GENERATOR;
+    } else if (b_quit) {
+      currentPage = QUIT_GAME;
+    }
+  }
 }
