@@ -97,7 +97,7 @@ void drawOpeningPage(int is_menu) {
     int buttonHeight = 100;
     int b_singleplayer = GuiButton(
         (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60, buttonWidth, buttonHeight},
-        "Single Player");
+        "Singleplayer");
 
     int b_multiplayer = GuiButton(
         (Rectangle){(screenWidth - buttonWidth) / 2, screenHeight / 2 - 60 + 100, buttonWidth, buttonHeight},
