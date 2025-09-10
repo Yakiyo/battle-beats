@@ -1,0 +1,4 @@
+#ifndef SINGLEPLAYER_H
+#define SINGLEPLAYER_H
+
+#endif // !SINGLEPLAYER_H
