@@ -1,0 +1,50 @@
+#include "beat.h"
+
+#include <stdio.h>
+
+#include "external/vec.h"
+
+Beatmap beatmap;
+
+Beatmap* readBeatmap(const char* filename) {
+  char filepath[512];
+  snprintf(filepath, sizeof(filepath), ".\\beatmaps\\%s", filename);
+
+  FILE* file = fopen(filepath, "r");
+  if (!file) {
+    printf("Failed to open beatmap file %s\n", filepath);
+    return NULL;
+  }
+  char music_path[256];
+  fgets(music_path, 256, file);
+  beatmap.music = strdup(music_path);
+  int len = strlen(beatmap.music);
+  if (len > 0 && beatmap.music[len - 1] == '\n') {
+    beatmap.music[len - 1] = '\0';  // Remove newline character
+  }
+
+  fscanf(file, "%d\n", &beatmap.duration);
+  vec_init(&beatmap.beats);
+  int time_start, time_end, arrow;
+  while (fscanf(file, "%d %d %d", &time_start, &time_end, &arrow) == 3) {
+    Beat beat;
+    beat.type = (time_end == 0) ? BEAT_TAP : BEAT_HOLD;
+    beat.time = time_start;
+    beat.end_time = time_end;
+    beat.arrow = (BEAT_ARROW)arrow;
+    beat.posX = 0;  // Default position
+    beat.posY = 0;  // Default position
+    vec_push(&beatmap.beats, beat);
+  }
+
+  fclose(file);
+  return &beatmap;
+}
+
+void _print_beat(Beat* beat) {
+  printf(
+      "Beat - Type: %s, Arrow: %d, Time: %d, End Time: %d, PosX: %d, PosY: "
+      "%d\n",
+      (beat->type == BEAT_TAP) ? "TAP" : "HOLD", beat->arrow, beat->time,
+      beat->end_time, beat->posX, beat->posY);
+}

@@ -1,1 +1,1 @@
-gcc -o main.exe main.c util.c const.c dir.c external/vec.c -I include -L lib -lraylib -lgdi32 -lwinmm && ./main.exe
+gcc -o main.exe main.c util.c const.c dir.c beat.c external/vec.c -I include -L lib -lraylib -lgdi32 -lwinmm && ./main.exe

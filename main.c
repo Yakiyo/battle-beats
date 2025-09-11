@@ -1,4 +1,6 @@
 #define RAYGUI_IMPLEMENTATION
+#define SUPPORT_MODULE_RAUDIO
+#define SUPPORT_FILEFORMAT_MP3
 #include <stdio.h>
 
 #include "const.h"
@@ -6,10 +8,13 @@
 #include "raygui.h"
 #include "raylib.h"
 #include "util.h"
+#include "beat.h"
 
 PageType currentPage = PAGE_OPENING;
 Texture2D charTexture1;
 char* beatFile = NULL;
+Beatmap* currentBeatmap = NULL;
+Music music;
 
 float _fader_timer = 0.0f;
 
@@ -17,21 +22,39 @@ void drawOpeningPage(int is_menu);
 
 void drawBeatSelectionPage(int is_multi);
 
+void prepare_game_singleplayer();
+
+void drawSingleplayerPage();
+
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
 int main() {
   InitWindow(screenWidth, screenHeight, "Beat Game");
+  InitAudioDevice();
   SetTargetFPS(60);
 
   Image charImage1 = LoadImage("asset/guiter-player-1.png");
+  Image a_right_i = LoadImage("asset/beat-right.png");
+  Image a_left_i = LoadImage("asset/beat-left.png");
+  Image a_up_i = LoadImage("asset/beat-up.png");
+  Image a_down_i = LoadImage("asset/beat-down.png");
+
+  // 100x100 images (50px radius)
+  ImageResize(&a_right_i, 100, 100);
+  ImageResize(&a_left_i, 100, 100);
+  ImageResize(&a_up_i, 100, 100);
+  ImageResize(&a_down_i, 100, 100);
 
   charTexture1 = LoadTextureFromImage(charImage1);
 
   // unload images from RAM after loading textures
   UnloadImage(charImage1);
-
+  UnloadImage(a_right_i);
+  UnloadImage(a_left_i);
+  UnloadImage(a_up_i);
+  UnloadImage(a_down_i);
   // Global GUI styles
   GuiSetStyle(DEFAULT, TEXT_SIZE, 50);
   GuiSetStyle(DEFAULT, TEXT_SPACING, 2);
@@ -52,10 +75,6 @@ int main() {
 
   loadBeatmaps();
 
-  // for (int i = 0; i < beatmap_files.length; i++) {
-  //   printf("%s\n", beatmap_files.data[i]);
-  // }
-
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -71,6 +90,7 @@ int main() {
         drawBeatSelectionPage(currentPage == BEAT_SELECTION_MULTI ? 1 : 0);
         break;
       case PAGE_SINGLEPLAYER:
+        drawSingleplayerPage();
         break;
       case QUIT_GAME:
         quit = 1;
@@ -82,6 +102,7 @@ int main() {
 
   UnloadTexture(charTexture1);
   unloadBeatmaps();
+  CloseAudioDevice();
   CloseWindow();
   return 0;
 }
@@ -156,7 +177,7 @@ void drawBeatSelectionPage(int is_multi) {
 
   int buttons[beatmap_files.length];
   for (int i = 0; i < beatmap_files.length; i++) {
-    char* name = beatmap_files.data[i];
+    char* name = strdup(beatmap_files.data[i]);
     char* dot = strrchr(name, '.');  // find last '.'
 
     if (dot && strcmp(dot, ".txt") == 0) {
@@ -176,7 +197,48 @@ void drawBeatSelectionPage(int is_multi) {
       // Here you would typically load the beatmap and transition to gameplay
       currentPage = is_multi ? PAGE_MULTIPLAYER : PAGE_SINGLEPLAYER;
       beatFile = beatmap_files.data[i];
+      printf("Selected beatmap: %s\n", beatFile);
+      currentBeatmap = readBeatmap(beatFile);
+      if (currentBeatmap == NULL) {
+        printf("Failed to load beatmap: %s\n", beatFile);
+        currentPage = PAGE_MENU;  // go back to menu on failure
+      }
+      if (!is_multi) {
+        prepare_game_singleplayer();
+      }
+      // TODO: use prepare game multiplayer when that is implemented
+
+      // int i;
+      // Beat* beat;
+      // vec_foreach_ptr(&currentBeatmap->beats, beat, i) {
+      //   _print_beat(beat);
+      // }
       break;
     }
   }
+}
+
+// beat radius for singleplayer
+const int beat_radius_sp = 50;
+
+void prepare_game_singleplayer() {
+  // Load the beatmap
+  if (beatFile == NULL) {
+    printf("No beatmap selected!\n");
+    currentPage = PAGE_MENU;
+    return;
+  }
+
+  // Initialize music
+  music = LoadMusicStream(currentBeatmap->music);
+  // Start playing music
+  PlayMusicStream(music);
+}
+
+
+void drawSingleplayerPage() {
+  DrawText("Singleplayer Mode", 100, 100, textFontSize, WHITE);
+  DrawText(currentBeatmap->music, 100, 200, textFontSize, WHITE);
+
+  UpdateMusicStream(music);
 }
