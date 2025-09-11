@@ -70,7 +70,8 @@ int main() {
       case BEAT_SELECTION_MULTI:
         drawBeatSelectionPage(currentPage == BEAT_SELECTION_MULTI ? 1 : 0);
         break;
-
+      case PAGE_SINGLEPLAYER:
+        break;
       case QUIT_GAME:
         quit = 1;
         break;
@@ -152,15 +153,23 @@ void drawBeatSelectionPage(int is_multi) {
   char* title = "Select a Beatmap";
   DrawText(title, (screenWidth - MeasureText(title, titleFontSize)) / 2, 100,
            titleFontSize, PINK);
-  
+
   int buttons[beatmap_files.length];
   for (int i = 0; i < beatmap_files.length; i++) {
-    buttons[i] = GuiButton((Rectangle){screenWidth / 4, 300 + i * 100, screenWidth / 2, 100},
-              beatmap_files.data[i]);
+    char* name = beatmap_files.data[i];
+    char* dot = strrchr(name, '.');  // find last '.'
+
+    if (dot && strcmp(dot, ".txt") == 0) {
+      *dot = '\0';  // truncate extension
+    }
+    buttons[i] = GuiButton(
+        (Rectangle){screenWidth / 4, 300 + i * 100, screenWidth / 2, 100},
+        beatmap_files.data[i]);
   }
 
   for (int i = 0; i < beatmap_files.length; i++) {
-    // if a button is pressed, find the file name for it and then proceed to game page with it
+    // if a button is pressed, find the file name for it and then proceed to
+    // game page with it
     if (buttons[i]) {
       beatFile = beatmap_files.data[i];
       printf("Selected beatmap: %s\n", beatFile);
