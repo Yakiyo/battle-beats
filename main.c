@@ -15,7 +15,7 @@
 #include "util.h"
 
 char* beatFile = NULL;
-Beatmap* currentBeatmap = NULL;
+Beatmap currentBeatmap;
 
 void drawBeatSelectionPage(int is_multi);
 
@@ -70,7 +70,7 @@ int main() {
         drawBeatSelectionPage(getCurrentPage() == BEAT_SELECTION_MULTI ? 1 : 0);
         break;
       case PAGE_SINGLEPLAYER:
-        drawSingleplayerPage(currentBeatmap);
+        drawSingleplayerPage(&currentBeatmap);
         break;
       case QUIT_GAME:
         quit = 1;
@@ -120,12 +120,12 @@ void drawBeatSelectionPage(int is_multi) {
       beatFile = beatmap_files.data[i];
       printf("Selected beatmap: %s\n", beatFile);
       currentBeatmap = readBeatmap(beatFile);
-      if (currentBeatmap == NULL) {
+      if (currentBeatmap.music == NULL) {
         printf("Failed to load beatmap: %s\n", beatFile);
         setCurrentPage(PAGE_MENU);  // go back to menu on failure
       }
       if (!is_multi) {
-        prepare_game_singleplayer(beatFile, currentBeatmap);
+        prepare_game_singleplayer(beatFile, &currentBeatmap);
       }
       // TODO: use prepare game multiplayer when that is implemented
       break;

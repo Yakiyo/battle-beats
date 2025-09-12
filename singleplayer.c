@@ -10,7 +10,6 @@
 Music music;
 
 const int _beat_speed = 4;  // pixels per frame
-
 int _streak;
 int _score;
 
@@ -18,12 +17,22 @@ Color GUITER_BODY = (Color){170, 112, 79, 255};
 Color GUITER_BORDER = (Color){101, 67, 33, 255};
 
 const int boardWidth = 800;
+int music_unloaded = 1;
 
 // should be called when starting a new game or resetting
 void resetCounters() {
   _streak = 0;
   _score = 0;
+  music_unloaded = 1;
 }
+
+typedef enum SPPAGE {
+  GAME,
+  PAUSE,
+  END,
+} SPPAGE;
+
+SPPAGE _currentSPPage = GAME;
 
 // internal function to draw the game board
 void _drawBoard(Beatmap* beatmap);
@@ -33,8 +42,48 @@ void _drawStatSection();
 
 void drawSingleplayerPage(Beatmap* beatmap) {
   UpdateMusicStream(music);
-  // TODO: create pause screen maybe?
 
+  if (_currentSPPage == PAUSE) {
+    char* text = "Game Paused. Press P to resume.";
+    DrawText(text, (screenWidth - MeasureText(text, textFontSize)) / 2, screenHeight / 2, textFontSize, WHITE);
+    return;
+  }
+
+  if (_currentSPPage == END) {
+    char* text = "Song ended! Press ENTER to return to menu.";
+    DrawText(text, (screenWidth - MeasureText(text, textFontSize)) / 2, screenHeight / 2, textFontSize, WHITE);
+
+    if (music_unloaded) {
+      StopMusicStream(music);
+      UnloadMusicStream(music);
+      music_unloaded = 0;
+    }
+
+    if (IsKeyPressed(KEY_ENTER)) {
+      setCurrentPage(PAGE_MENU);
+      _currentSPPage = GAME;  // reset for next game
+      resetCounters();
+      vec_clear(&beatmap->beats);
+    }
+    return;
+  }
+
+  if (IsMusicStreamPlaying(music) == false && _currentSPPage == GAME) {
+    // music ended, go to end screen
+    _currentSPPage = END;
+    return;
+  }
+
+  if (IsKeyPressed(KEY_P)) {
+    if (_currentSPPage == GAME) {
+      _currentSPPage = PAUSE;
+      PauseMusicStream(music);
+    } else if (_currentSPPage == PAUSE) {
+      _currentSPPage = GAME;
+      ResumeMusicStream(music);
+    }
+    return;
+  }
   // draw the board
   _drawBoard(beatmap);
 
@@ -43,6 +92,9 @@ void drawSingleplayerPage(Beatmap* beatmap) {
   Beat* beat;
   vec_foreach_ptr(&beatmap->beats, beat, i) {
     int y = beat->posY;
+    // if the beat is out of screen, skip drawing it
+    if (y < 100 || y > screenHeight) continue;
+
     if (y > screenHeight - 50 - 20) {
       // beat crossed the bottom without being hit, so its a miss
       if (beat->pressed == 0) {
@@ -50,9 +102,8 @@ void drawSingleplayerPage(Beatmap* beatmap) {
         printf("Miss! Streak broken. beat time %d y %d\n", beat->time, y);
         _streak = 0;
       }
+      continue;
     }
-    // if the beat is out of screen, skip drawing it
-    if (y < 100 || y > (screenHeight - 50 - 20)) continue;
     drawBeat(beat);
     int gap = (screenHeight - 50 - 20) - y;
     if (gap <= 100) {
@@ -62,14 +113,14 @@ void drawSingleplayerPage(Beatmap* beatmap) {
         if (gap <= 60) {
           // perfect hit
           _streak++;
-          if (_streak > 99) _streak = 99;  // cap streak at 99
-          _score += 300;
+          if (_streak > 99) _streak = 99;        // cap streak at 99
+          _score += _streak == 0 ? 300 : 300 * _streak;
           printf("Perfect! Streak: %d\n", _streak);
         } else {
           // good hit
           // does not increase streak
           // but does not break it either
-          _score += 100;
+          _score += _streak == 0 ? 100 : 100 * _streak;
         }
       }
     }
@@ -78,6 +129,7 @@ void drawSingleplayerPage(Beatmap* beatmap) {
   _drawStatSection();
   // update beats
   vec_foreach_ptr(&beatmap->beats, beat, i) {
+    if (beat->posY > screenHeight) continue;
     // move the beat down by _beat_speed pixels
     beat->posY += _beat_speed;
   };
@@ -107,6 +159,7 @@ void _drawStatSection() {
   {
     float progress = GetMusicTimePlayed(music) / GetMusicTimeLength(music);
     if (progress > 1.0f) progress = 1.0f;  // cap at 100%
+
     DrawRectangle(screenWidth / 6 * 2, 50, screenWidth / 6 * 2, 12, GUITER_BODY);
     DrawRectangle(screenWidth / 6 * 2, 50, (int)(progress * screenWidth / 6 * 2), 12, GUITER_BODY);
     DrawCircle((screenWidth / 6 * 2) + (progress * screenWidth / 6 * 2), 50 + 6, 10, GUITER_BODY);
@@ -195,6 +248,7 @@ void prepare_game_singleplayer(char* beatFile, Beatmap* currentBeatmap) {
   resetCounters();
   // Initialize music
   music = LoadMusicStream(currentBeatmap->music);
+  music.looping = false;
   // Start playing music
   PlayMusicStream(music);
 }

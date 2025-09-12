@@ -5,16 +5,17 @@
 #include "assets.h"
 #include "external/vec.h"
 
-Beatmap beatmap;
 
-Beatmap* readBeatmap(const char* filename) {
+Beatmap readBeatmap(const char* filename) {
+  Beatmap beatmap;
+  beatmap.music = NULL;
   char filepath[512];
   snprintf(filepath, sizeof(filepath), ".\\beatmaps\\%s", filename);
 
   FILE* file = fopen(filepath, "r");
   if (!file) {
     printf("Failed to open beatmap file %s\n", filepath);
-    return NULL;
+    return beatmap;
   }
   char music_path[256];
   fgets(music_path, 256, file);
@@ -39,7 +40,7 @@ Beatmap* readBeatmap(const char* filename) {
   }
 
   fclose(file);
-  return &beatmap;
+  return beatmap;
 }
 
 void _print_beat(Beat* beat) {

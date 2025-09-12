@@ -35,7 +35,7 @@ typedef struct Beatmap {
     vec_t(Beat) beats;
 } Beatmap;
 
-Beatmap* readBeatmap(const char* filename);
+Beatmap readBeatmap(const char* filename);
 // debugging function
 void _print_beat(Beat* beat);
 
