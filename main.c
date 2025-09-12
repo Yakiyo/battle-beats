@@ -55,6 +55,8 @@ int main() {
 
   loadBeatmaps();
 
+  // TODO: manually handle escape key. use SetExitKey(0) to disable raylib's
+  // default escape key behavior
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -153,9 +155,9 @@ void prepare_game_singleplayer() {
     beat->posX = screenWidth / 6 * (beat->arrow + 1);
     beat->posY = beat_radius_sp;  // all beats start at the top portion of the screen
   }
-
+  resetCounters();
   // Initialize music
   music = LoadMusicStream(currentBeatmap->music);
   // Start playing music
-  // PlayMusicStream(music);
+  PlayMusicStream(music);
 }

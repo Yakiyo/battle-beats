@@ -5,5 +5,6 @@
 #include "beat.h"
 
 void drawSingleplayerPage(Beatmap* beatmap, Music* music);
+void resetCounters();
 
 #endif // !SINGLEPLAYER_H
