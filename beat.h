@@ -37,4 +37,6 @@ Beatmap* readBeatmap(const char* filename);
 // debugging function
 void _print_beat(Beat* beat);
 
+void drawBeat(Beat* beat);
+
 #endif  // !BEAT_H

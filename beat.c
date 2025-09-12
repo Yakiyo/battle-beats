@@ -1,7 +1,8 @@
 #include "beat.h"
 
 #include <stdio.h>
-
+#include "raylib.h"
+#include "assets.h"
 #include "external/vec.h"
 
 Beatmap beatmap;
@@ -47,4 +48,9 @@ void _print_beat(Beat* beat) {
       "%d\n",
       (beat->type == BEAT_TAP) ? "TAP" : "HOLD", beat->arrow, beat->time,
       beat->end_time, beat->posX, beat->posY);
+}
+
+void drawBeat(Beat* beat) {
+  Texture2D texture = getArrowTexture(beat->arrow);
+  DrawTexture(texture, beat->posX - texture.width / 2, beat->posY - texture.height / 2, WHITE);
 }

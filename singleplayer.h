@@ -1,4 +1,9 @@
 #ifndef SINGLEPLAYER_H
 #define SINGLEPLAYER_H
 
+#include "raylib.h"
+#include "beat.h"
+
+void drawSingleplayerPage(Beatmap* beatmap, Music* music);
+
 #endif // !SINGLEPLAYER_H

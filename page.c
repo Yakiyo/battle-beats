@@ -1,7 +1,9 @@
-#include "raylib.h"
-#include "raygui.h"
-#include "const.h"
+#include <math.h>
+
 #include "assets.h"
+#include "const.h"
+#include "raygui.h"
+#include "raylib.h"
 
 PageType _currentPage = PAGE_OPENING;
 

@@ -3,52 +3,55 @@
 #define SUPPORT_FILEFORMAT_MP3
 #include <stdio.h>
 
+#include "assets.h"
+#include "beat.h"
 #include "const.h"
 #include "dir.h"
+#include "page.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "singleplayer.h"
 #include "util.h"
-#include "beat.h"
-#include "page.h"
 
 char* beatFile = NULL;
 Beatmap* currentBeatmap = NULL;
 Music music;
 
-
 void drawBeatSelectionPage(int is_multi);
 
 void prepare_game_singleplayer();
-
-void drawSingleplayerPage();
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
 int main() {
+  // borderless windowed mode
+  SetConfigFlags(FLAG_WINDOW_UNDECORATED);
   InitWindow(screenWidth, screenHeight, "Beat Game");
   InitAudioDevice();
   SetTargetFPS(60);
   loadAssets();
 
-  // Global GUI styles
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 50);
-  GuiSetStyle(DEFAULT, TEXT_SPACING, 2);
+  {
+    // Global GUI styles
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 50);
+    GuiSetStyle(DEFAULT, TEXT_SPACING, 2);
 
-  // Transparent backgrounds
+    // Transparent backgrounds
 
-  GuiSetStyle(DEFAULT, BASE_COLOR_NORMAL, 0x00000000);
-  GuiSetStyle(DEFAULT, BASE_COLOR_FOCUSED, 0x00000000);
-  GuiSetStyle(DEFAULT, BASE_COLOR_PRESSED, 0x00000000);
+    GuiSetStyle(DEFAULT, BASE_COLOR_NORMAL, 0x00000000);
+    GuiSetStyle(DEFAULT, BASE_COLOR_FOCUSED, 0x00000000);
+    GuiSetStyle(DEFAULT, BASE_COLOR_PRESSED, 0x00000000);
 
-  GuiSetStyle(DEFAULT, BORDER_WIDTH, 0);  // hide outline
+    GuiSetStyle(DEFAULT, BORDER_WIDTH, 0);  // hide outline
 
-  // Text colors
+    // Text colors
 
-  GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, 0xFFFFFFFF);   // White
-  GuiSetStyle(DEFAULT, TEXT_COLOR_FOCUSED, 0xFF69B4FF);  // pink hover
-  GuiSetStyle(DEFAULT, TEXT_COLOR_PRESSED, 0xFF69B4FF);  // pink press
+    GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, 0xFFFFFFFF);   // White
+    GuiSetStyle(DEFAULT, TEXT_COLOR_FOCUSED, 0xFF69B4FF);  // pink hover
+    GuiSetStyle(DEFAULT, TEXT_COLOR_PRESSED, 0xFF69B4FF);  // pink press
+  }
 
   loadBeatmaps();
 
@@ -67,7 +70,7 @@ int main() {
         drawBeatSelectionPage(getCurrentPage() == BEAT_SELECTION_MULTI ? 1 : 0);
         break;
       case PAGE_SINGLEPLAYER:
-        drawSingleplayerPage();
+        drawSingleplayerPage(currentBeatmap, &music);
         break;
       case QUIT_GAME:
         quit = 1;
@@ -125,12 +128,6 @@ void drawBeatSelectionPage(int is_multi) {
         prepare_game_singleplayer();
       }
       // TODO: use prepare game multiplayer when that is implemented
-
-      // int i;
-      // Beat* beat;
-      // vec_foreach_ptr(&currentBeatmap->beats, beat, i) {
-      //   _print_beat(beat);
-      // }
       break;
     }
   }
@@ -141,22 +138,24 @@ const int beat_radius_sp = 50;
 
 void prepare_game_singleplayer() {
   // Load the beatmap
-  if (beatFile == NULL) {
+  if (beatFile == NULL || currentBeatmap == NULL) {
     printf("No beatmap selected!\n");
     setCurrentPage(PAGE_MENU);
     return;
+  }
+  // assign the positions of the beats based on their arrow type
+  // and set their initial y position to be above the screen
+  // split screen width into 4 equal parts for each arrow
+  // and two more for the paddings on the sides
+  int i;
+  Beat* beat;
+  vec_foreach_ptr(&currentBeatmap->beats, beat, i) {
+    beat->posX = screenWidth / 6 * (beat->arrow + 1);
+    beat->posY = beat_radius_sp;  // all beats start at the top portion of the screen
   }
 
   // Initialize music
   music = LoadMusicStream(currentBeatmap->music);
   // Start playing music
-  PlayMusicStream(music);
-}
-
-
-void drawSingleplayerPage() {
-  DrawText("Singleplayer Mode", 100, 100, textFontSize, WHITE);
-  DrawText(currentBeatmap->music, 100, 200, textFontSize, WHITE);
-
-  UpdateMusicStream(music);
+  // PlayMusicStream(music);
 }
