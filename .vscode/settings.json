@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "justfile": "makefile",
+        "raylib.h": "c"
+    }
+}

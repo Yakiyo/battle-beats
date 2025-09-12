@@ -1,1 +1,0 @@
-gcc -o maincpy.exe beat.c maincpy.c const.c -I include -L lib -lraylib -lgdi32 -lwinmm && ./maincpy.exe

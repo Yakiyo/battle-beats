@@ -1,96 +1,71 @@
-#include<stdio.h>
-#include "const.h"
-#include "vec.h"
+#include "beat.h"
+
+#include <stdio.h>
 #include "raylib.h"
-
-/**
- * KEY ENUMS
- * 1 - left
- * 2 - up
- * 3 - right
- * 4 - down
- */
+#include "assets.h"
+#include "external/vec.h"
 
 
-int startX(int slot) {
-  return (screenWUnit * slot) + 40 + beatRadius;
-}
+Beatmap readBeatmap(const char* filename) {
+  Beatmap beatmap;
+  beatmap.music = NULL;
+  char filepath[512];
+  snprintf(filepath, sizeof(filepath), ".\\beatmaps\\%s", filename);
 
-typedef struct Beat {
-  // 0 means its yet to come
-  // 1 means it is being drawn
-  // 2 means we passed it
-  int passed;
-  int time;
-  int slot; // 1-4
-  int posX;
-  int posY;
-} Beat;
-
-int score = 0;
-Vec(Beat) beats;
-
-void CreateBeat(int slot, int time) {
-  int x = startX(slot);
-  // int y = headerHeight + beatRadius;
-  Beat beat;
-  beat.slot = slot;
-  beat.posX = x;
-  beat.posY = -beatRadius;
-  beat.time = time;
-  vec_push(Beat, beats, beat);
-}
-
-void UpdateBeats(int timeElapsed) {
-  for (int i = 0; i < vec_size(beats); i++) {
-    Beat *beat = &vec_A(beats, i);
-    if (beat->passed == 2) {
-      continue;
-    }
-
-    // this beat is yet to come so we dont need to update it
-    if (beat->time > timeElapsed) {
-      beat->passed = 0;
-      continue;
-    }
-
-    beat->passed = 1;
-    beat->posY += beatSpeed;
-
-    if (beat->posY > (screenHeight - headerHeight + beatRadius)) {
-      beat->passed = 2;
-    }
+  FILE* file = fopen(filepath, "r");
+  if (!file) {
+    printf("Failed to open beatmap file %s\n", filepath);
+    return beatmap;
   }
-}
-
-void DrawBeats() {
-  for (int i = 0; i < vec_size(beats); i++) {
-    Beat beat = vec_A(beats, i);
-    if (beat.passed != 1) continue;
-    DrawCircle(beat.posX, beat.posY, beatRadius, BLUE);
+  char music_path[256];
+  fgets(music_path, 256, file);
+  beatmap.music = strdup(music_path);
+  int len = strlen(beatmap.music);
+  if (len > 0 && beatmap.music[len - 1] == '\n') {
+    beatmap.music[len - 1] = '\0';  // Remove newline character
   }
+
+  fscanf(file, "%d\n", &beatmap.duration);
+  vec_init(&beatmap.beats);
+  int time_start, time_end, arrow;
+  while (fscanf(file, "%d %d %d", &time_start, &time_end, &arrow) == 3) {
+    Beat beat;
+    beat.type = (time_end == 0) ? BEAT_TAP : BEAT_HOLD;
+    beat.time = time_start;
+    beat.end_time = time_end;
+    beat.arrow = (BEAT_ARROW)arrow;
+    beat.posX = 0;  // Default position
+    beat.posY = 0;  // Default position
+    vec_push(&beatmap.beats, beat);
+  }
+
+  fclose(file);
+  return beatmap;
 }
 
-int ReadBeatMapFile() {
-    int total_time = 0;
-    FILE *file = fopen("beatmap.txt", "r");
-    if (!file) {
-        perror("Failed to open beatmap file");
-        return 0;
-    }
-    fscanf(file, "%d", &total_time);
-    int time, slot;
-    while (fscanf(file, "%d %d", &time, &slot) == 2) {
-        CreateBeat(slot, time);
-    }
-    
-    fclose(file);
-    return total_time;
+void _print_beat(Beat* beat) {
+  printf(
+      "Beat - Type: %s, Arrow: %d, Time: %d, End Time: %d, PosX: %d, PosY: "
+      "%d\n",
+      (beat->type == BEAT_TAP) ? "TAP" : "HOLD", beat->arrow, beat->time,
+      beat->end_time, beat->posX, beat->posY);
 }
 
-void LogBeats() {
-  for(int i = 0; i < vec_size(beats); i++) {
-    Beat beat = vec_A(beats, i);
-    printf("Beat %d: slot=%d, time=%d, pos=(%d,%d), passed=%d\n", i, beat.slot, beat.time, beat.posX, beat.posY, beat.passed);
+void drawBeat(Beat* beat) {
+  Texture2D texture = getArrowTexture(beat->arrow);
+  DrawTexture(texture, beat->posX - texture.width / 2, beat->posY - texture.height / 2, WHITE);
+}
+
+int getKey(BEAT_ARROW arrow) {
+  switch (arrow)
+  {
+  case BEAT_LEFT:
+    return KEY_LEFT;
+  case BEAT_DOWN:
+    return KEY_DOWN;
+  case BEAT_UP:
+    return KEY_UP;
+  case BEAT_RIGHT:
+    return KEY_RIGHT;
   }
 }
