@@ -1,6 +1,7 @@
 #define RAYGUI_IMPLEMENTATION
 #define SUPPORT_MODULE_RAUDIO
 #define SUPPORT_FILEFORMAT_MP3
+
 #include <stdio.h>
 
 #include "assets.h"
@@ -15,11 +16,8 @@
 
 char* beatFile = NULL;
 Beatmap* currentBeatmap = NULL;
-Music music;
 
 void drawBeatSelectionPage(int is_multi);
-
-void prepare_game_singleplayer();
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -72,7 +70,7 @@ int main() {
         drawBeatSelectionPage(getCurrentPage() == BEAT_SELECTION_MULTI ? 1 : 0);
         break;
       case PAGE_SINGLEPLAYER:
-        drawSingleplayerPage(currentBeatmap, &music);
+        drawSingleplayerPage(currentBeatmap);
         break;
       case QUIT_GAME:
         quit = 1;
@@ -127,37 +125,10 @@ void drawBeatSelectionPage(int is_multi) {
         setCurrentPage(PAGE_MENU);  // go back to menu on failure
       }
       if (!is_multi) {
-        prepare_game_singleplayer();
+        prepare_game_singleplayer(beatFile, currentBeatmap);
       }
       // TODO: use prepare game multiplayer when that is implemented
       break;
     }
   }
-}
-
-// beat radius for singleplayer
-const int beat_radius_sp = 50;
-
-void prepare_game_singleplayer() {
-  // Load the beatmap
-  if (beatFile == NULL || currentBeatmap == NULL) {
-    printf("No beatmap selected!\n");
-    setCurrentPage(PAGE_MENU);
-    return;
-  }
-  // assign the positions of the beats based on their arrow type
-  // and set their initial y position to be above the screen
-  // split screen width into 4 equal parts for each arrow
-  // and two more for the paddings on the sides
-  int i;
-  Beat* beat;
-  vec_foreach_ptr(&currentBeatmap->beats, beat, i) {
-    beat->posX = screenWidth / 6 * (beat->arrow + 1);
-    beat->posY = beat_radius_sp;  // all beats start at the top portion of the screen
-  }
-  resetCounters();
-  // Initialize music
-  music = LoadMusicStream(currentBeatmap->music);
-  // Start playing music
-  PlayMusicStream(music);
 }

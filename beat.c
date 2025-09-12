@@ -54,3 +54,17 @@ void drawBeat(Beat* beat) {
   Texture2D texture = getArrowTexture(beat->arrow);
   DrawTexture(texture, beat->posX - texture.width / 2, beat->posY - texture.height / 2, WHITE);
 }
+
+int getKey(BEAT_ARROW arrow) {
+  switch (arrow)
+  {
+  case BEAT_LEFT:
+    return KEY_LEFT;
+  case BEAT_DOWN:
+    return KEY_DOWN;
+  case BEAT_UP:
+    return KEY_UP;
+  case BEAT_RIGHT:
+    return KEY_RIGHT;
+  }
+}

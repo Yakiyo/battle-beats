@@ -18,6 +18,8 @@ typedef enum BEAT_ARROW {
 typedef struct Beat {
   BEAT_TYPE type;
   BEAT_ARROW arrow;
+  // 0 for false, 1 for true
+  int pressed;
   int time;
   int end_time;  // only used for HOLD type
   int posX;
@@ -38,5 +40,7 @@ Beatmap* readBeatmap(const char* filename);
 void _print_beat(Beat* beat);
 
 void drawBeat(Beat* beat);
+
+int getKey(BEAT_ARROW arrow);
 
 #endif  // !BEAT_H
