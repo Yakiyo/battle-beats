@@ -1,4 +1,4 @@
-D:\Codes\bb\beatmaps\Lumiere.mp3
+beatmaps\Lumiere.mp3
 21
 5 0 3
 9 0 1

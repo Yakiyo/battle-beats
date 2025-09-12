@@ -1,4 +1,4 @@
-D:\Codes\bb\beatmaps\10 seconds.mp3
+beatmaps\10 seconds.mp3
 12
 5 0 3
 9 0 1
