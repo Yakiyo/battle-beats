@@ -173,8 +173,8 @@ void write_file() {
   if (dot && strcmp(dot, ".mp3") == 0) {
     *dot = '\0';  // truncate extension
   }
-  char* filename = TextFormat("beatmaps/%s.txt", mname);
-  FILE* file = fopen(filename, "w");
+  // char* filename = TextFormat("beatmaps/%s.txt", mname);
+  FILE* file = fopen(TextFormat("beatmaps/%s.txt", mname), "w");
   if (!file) {
     perror("Failed to open file");
     return;
