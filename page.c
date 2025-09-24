@@ -65,7 +65,7 @@ void drawOpeningPage(int is_menu) {
     } else if (b_multiplayer) {
       setCurrentPage(BEAT_SELECTION_MULTI);
     } else if (b_generator) {
-      setCurrentPage(PAGE_GENERATOR);
+      setCurrentPage(BEAT_SELECTION_GENERATOR);
     } else if (b_quit) {
       setCurrentPage(QUIT_GAME);
     }

@@ -8,11 +8,12 @@
 #include "beat.h"
 #include "const.h"
 #include "dir.h"
+#include "generator.h"
+#include "multiplayer.h"
 #include "page.h"
 #include "raygui.h"
 #include "raylib.h"
 #include "singleplayer.h"
-#include "multiplayer.h"
 #include "util.h"
 
 char* beatFile = NULL;
@@ -53,6 +54,7 @@ int main() {
   }
 
   loadBeatmaps();
+  getMusicFiles();
 
   // TODO: manually handle escape key. use SetExitKey(0) to disable raylib's
   // default escape key behavior
@@ -75,6 +77,12 @@ int main() {
         break;
       case PAGE_MULTIPLAYER:
         drawMultiplayerPage(&currentBeatmap);
+        break;
+      case BEAT_SELECTION_GENERATOR:
+        generator_selection_page();
+        break;
+      case PAGE_GENERATOR:
+        generator_page();
         break;
       case QUIT_GAME:
         quit = 1;
@@ -110,7 +118,7 @@ void drawBeatSelectionPage(int is_multi) {
     }
     buttons[i] = GuiButton(
         (Rectangle){screenWidth / 4, 300 + i * 100, screenWidth / 2, 100},
-        beatmap_files.data[i]);
+        name);
   }
 
   for (int i = 0; i < beatmap_files.length; i++) {
