@@ -104,7 +104,7 @@ void drawSingleplayerPage(Beatmap* beatmap) {
       }
       continue;
     }
-    drawBeat(beat);
+    drawBeat(beat, 0);
     int gap = (screenHeight - 50 - 20) - y;
     if (gap <= 100) {
       int key = getKey(beat->arrow);

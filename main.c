@@ -12,6 +12,7 @@
 #include "raygui.h"
 #include "raylib.h"
 #include "singleplayer.h"
+#include "multiplayer.h"
 #include "util.h"
 
 char* beatFile = NULL;
@@ -72,6 +73,9 @@ int main() {
       case PAGE_SINGLEPLAYER:
         drawSingleplayerPage(&currentBeatmap);
         break;
+      case PAGE_MULTIPLAYER:
+        drawMultiplayerPage(&currentBeatmap);
+        break;
       case QUIT_GAME:
         quit = 1;
         break;
@@ -126,6 +130,8 @@ void drawBeatSelectionPage(int is_multi) {
       }
       if (!is_multi) {
         prepare_game_singleplayer(beatFile, &currentBeatmap);
+      } else {
+        prepare_game_multiplayer(beatFile, &currentBeatmap);
       }
       // TODO: use prepare game multiplayer when that is implemented
       break;

@@ -1,10 +1,10 @@
 #include "beat.h"
 
 #include <stdio.h>
-#include "raylib.h"
+
 #include "assets.h"
 #include "external/vec.h"
-
+#include "raylib.h"
 
 Beatmap readBeatmap(const char* filename) {
   Beatmap beatmap;
@@ -51,21 +51,39 @@ void _print_beat(Beat* beat) {
       beat->end_time, beat->posX, beat->posY);
 }
 
-void drawBeat(Beat* beat) {
-  Texture2D texture = getArrowTexture(beat->arrow);
+void drawBeat(Beat* beat, int alpha) {
+  Texture2D texture;
+  if (alpha == 0)
+    texture = getArrowTexture(beat->arrow);
+  else
+    texture = getArrowTextureAlpha(beat->arrow);
+
+  printf("drawing beat at %d %d time %d alpha %d\n", beat->posX, beat->posY, beat->time, alpha);
   DrawTexture(texture, beat->posX - texture.width / 2, beat->posY - texture.height / 2, WHITE);
 }
 
 int getKey(BEAT_ARROW arrow) {
-  switch (arrow)
-  {
-  case BEAT_LEFT:
-    return KEY_LEFT;
-  case BEAT_DOWN:
-    return KEY_DOWN;
-  case BEAT_UP:
-    return KEY_UP;
-  case BEAT_RIGHT:
-    return KEY_RIGHT;
+  switch (arrow) {
+    case BEAT_LEFT:
+      return KEY_LEFT;
+    case BEAT_DOWN:
+      return KEY_DOWN;
+    case BEAT_UP:
+      return KEY_UP;
+    case BEAT_RIGHT:
+      return KEY_RIGHT;
+  }
+}
+
+int getKeyAlpha(BEAT_ARROW arrow) {
+  switch (arrow) {
+    case BEAT_LEFT:
+      return KEY_A;
+    case BEAT_DOWN:
+      return KEY_S;
+    case BEAT_UP:
+      return KEY_W;
+    case BEAT_RIGHT:
+      return KEY_D;
   }
 }

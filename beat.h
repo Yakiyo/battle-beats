@@ -39,8 +39,10 @@ Beatmap readBeatmap(const char* filename);
 // debugging function
 void _print_beat(Beat* beat);
 
-void drawBeat(Beat* beat);
+void drawBeat(Beat* beat, int alpha);
 
 int getKey(BEAT_ARROW arrow);
+
+int getKeyAlpha(BEAT_ARROW arrow);
 
 #endif  // !BEAT_H

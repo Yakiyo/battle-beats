@@ -8,5 +8,6 @@ extern Texture2D charTexture1;
 void loadAssets();
 void unloadAssets();
 Texture2D getArrowTexture(BEAT_ARROW arrow);
+Texture2D getArrowTextureAlpha(BEAT_ARROW arrow);
 
 #endif // !ASSETS_H
