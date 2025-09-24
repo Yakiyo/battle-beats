@@ -58,7 +58,6 @@ void drawBeat(Beat* beat, int alpha) {
   else
     texture = getArrowTextureAlpha(beat->arrow);
 
-  printf("drawing beat at %d %d time %d alpha %d\n", beat->posX, beat->posY, beat->time, alpha);
   DrawTexture(texture, beat->posX - texture.width / 2, beat->posY - texture.height / 2, WHITE);
 }
 
