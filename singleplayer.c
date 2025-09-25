@@ -41,6 +41,7 @@ void _drawBoard(Beatmap* beatmap);
 void _drawStatSection();
 
 void drawSingleplayerPage(Beatmap* beatmap) {
+  
   UpdateMusicStream(music);
 
   if (_currentSPPage == PAUSE) {

@@ -104,6 +104,10 @@ int main() {
 /////////////////////////////////////////////////////
 
 void drawBeatSelectionPage(int is_multi) {
+  if(IsKeyPressed(KEY_Q)){
+    setCurrentPage(PAGE_MENU);
+    return;
+  }
   char* title = "Select a Beatmap";
   DrawText(title, (screenWidth - MeasureText(title, titleFontSize)) / 2, 100,
            titleFontSize, PINK);

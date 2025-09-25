@@ -26,6 +26,11 @@ void _resetState();
 void write_file();
 
 void generator_selection_page() {
+  if(IsKeyPressed(KEY_Q)){
+    _resetState();
+    setCurrentPage(PAGE_MENU);
+    return;
+  }
   int buttons[music_files.length];
   char* title = "Select a Music File";
 
