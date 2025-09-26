@@ -9,7 +9,7 @@
 
 Music _music;
 
-const int beat_speed = 4;  // pixels per frame
+const int beat_speed = 6;  // pixels per frame
 int streakL;
 int scoreL;
 int streakR;
@@ -145,7 +145,7 @@ void drawMultiplayerPage(Beatmap* beatmap) {
     return;
   }
 
-  DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, WHITE);
+  // DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, WHITE);
 
   drawLeftPlayer();
   drawRightPlayer();

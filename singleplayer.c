@@ -9,7 +9,7 @@
 
 Music music;
 
-const int _beat_speed = 4;  // pixels per frame
+const int _beat_speed = 6;  // pixels per frame
 int _streak;
 int _score;
 
